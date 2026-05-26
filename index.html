@@ -38,67 +38,172 @@
   }
   .btn-admin:hover { background: rgba(255,255,255,0.22); }
 
-  /* ─── 컨테이너 ─── */
-  .container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+  /* ─── 필터 바 ─── */
+  .filter-bar {
+    background: white;
+    border-bottom: 1px solid #e2eaf5;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: sticky; top: 58px; z-index: 90;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .filter-section {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 24px 10px 0;
+    border-right: 1px solid #e2eaf5;
+    margin-right: 24px;
+  }
+  .filter-section:last-child { border-right: none; margin-right: 0; }
+  .filter-label { font-size: 12px; font-weight: 800; color: #888; white-space: nowrap; letter-spacing: 0.2px; }
 
-  /* ─── 월 탭 ─── */
-  .month-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-  .month-bar-label { font-size: 12px; color: #666; font-weight: 600; margin-right: 4px; }
-  .month-tab {
-    padding: 6px 16px;
-    border-radius: 20px;
+  /* ─── 월 드롭다운 ─── */
+  .month-select-wrap { position: relative; display: inline-block; }
+  .month-select {
+    appearance: none; -webkit-appearance: none;
+    padding: 10px 44px 10px 18px;
+    border-radius: 10px;
     border: 2px solid #c5d4ec;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f2d6b;
+    background: white;
+    cursor: pointer;
+    min-width: 160px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(15,45,107,0.07);
+  }
+  .month-select:focus, .month-select:hover { border-color: #0f2d6b; box-shadow: 0 2px 8px rgba(15,45,107,0.13); }
+  .month-select-wrap::after {
+    content: '▾';
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; color: #0f2d6b; pointer-events: none;
+  }
+
+  /* ─── 구분 탭 ─── */
+  .cat-tabs { display: flex; gap: 4px; }
+  .cat-tab {
+    padding: 6px 20px;
+    border-radius: 16px;
+    border: 1.5px solid #d0dcea;
     background: white;
     cursor: pointer;
     font-size: 13px;
-    font-weight: 600;
-    color: #4a5568;
-    transition: all 0.2s;
-  }
-  .month-tab.active {
-    background: #0f2d6b;
-    border-color: #0f2d6b;
-    color: white;
-  }
-  .month-tab:hover:not(.active) { border-color: #0f2d6b; color: #0f2d6b; }
-
-  /* ─── 분류 탭 ─── */
-  .cat-tabs { display: flex; gap: 0; margin-bottom: 20px; border-radius: 8px; overflow: hidden;
-    border: 2px solid #0f2d6b; width: fit-content; }
-  .cat-tab {
-    padding: 8px 28px;
-    cursor: pointer;
-    font-size: 14px;
     font-weight: 700;
-    background: white;
-    color: #0f2d6b;
-    transition: all 0.2s;
-    border: none;
+    color: #4a5568;
+    transition: all 0.15s;
   }
-  .cat-tab.active { background: #0f2d6b; color: white; }
-  .cat-tab:hover:not(.active) { background: #e8eef5; }
+  .cat-tab.active { background: #0f2d6b; border-color: #0f2d6b; color: white; }
+  .cat-tab:hover:not(.active) { border-color: #0f2d6b; color: #0f2d6b; }
+
+  /* ─── 컨테이너 ─── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
 
   /* ─── 보험사 그리드 ─── */
   .company-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .company-card {
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    overflow: hidden;
-    border: 1px solid #e2eaf5;
-  }
-  .company-header {
-    background: #1e4fa0;
-    color: white;
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 700;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    border: 1px solid #e8eff8;
+    padding: 18px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
   }
-  .company-count { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
-  .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 6px; padding: 10px; }
+  .company-card:hover { box-shadow: 0 8px 24px rgba(15,45,107,0.14); transform: translateY(-2px); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .card-company { font-size: 17px; font-weight: 800; color: #0f2d6b; }
+  .card-date-badge { font-size: 12px; font-weight: 700; color: #1e4fa0; background: #eef4ff; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+  .card-thumbs { display: flex; gap: 6px; }
+  .card-thumb {
+    flex: 1; min-width: 0;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e0e8f5;
+    background: #f5f8fd;
+    pointer-events: none;
+  }
+  .card-thumb-more {
+    flex: 1; min-width: 0;
+    aspect-ratio: 3/4;
+    border-radius: 6px;
+    border: 1px solid #e0e8f5;
+    background: #f0f4fa;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; color: #1e4fa0;
+  }
+  .card-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .card-count { font-size: 12px; color: #888; }
+  .card-count strong { color: #0f2d6b; }
+  .card-arrow { font-size: 18px; color: #c5d4ec; }
+
+  /* ─── 보험사 상세 뷰 ─── */
+  .detail-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 22px;
+  }
+  .btn-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; background: white; color: #0f2d6b;
+    border: 2px solid #c5d4ec; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-back:hover { border-color: #0f2d6b; background: #eef4ff; }
+  .detail-title { font-size: 22px; font-weight: 900; color: #0f2d6b; }
+  .detail-sub { font-size: 13px; color: #888; margin-left: auto; }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .detail-item { display: flex; flex-direction: column; gap: 0; }
+  .detail-img-wrap { position: relative; cursor: pointer; }
+  .detail-img {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+    width: 100%;
+    border: 1px solid #e0e8f5;
+    border-bottom: none;
+    background: #f5f8fd;
+    display: block;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .detail-img-wrap:hover .detail-img { transform: scale(1.02); box-shadow: 0 6px 20px rgba(0,0,0,0.16); }
+  .detail-card-body {
+    background: white;
+    border: 1px solid #e0e8f5;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 8px 8px 10px;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .detail-name {
+    font-size: 11px; color: #555; text-align: center;
+    line-height: 1.4; word-break: break-all;
+  }
+  .detail-actions {
+    display: flex; gap: 5px;
+  }
+  .btn-dl, .btn-print {
+    flex: 1; padding: 5px 0;
+    border-radius: 5px; border: 1.5px solid #d0dcea;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    transition: all 0.15s; background: white; font-family: inherit;
+  }
+  .btn-dl { color: #1e4fa0; }
+  .btn-dl:hover { background: #eef4ff; border-color: #1e4fa0; }
+  .btn-print { color: #444; }
+  .btn-print:hover { background: #f5f5f5; border-color: #999; }
+
   .img-thumb {
     aspect-ratio: 3/4;
     object-fit: cover;
@@ -110,8 +215,6 @@
     background: #f5f8fd;
   }
   .img-thumb:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
-  .img-label { font-size: 10px; color: #888; text-align: center; margin-top: 2px; padding: 0 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* ─── 빈 상태 ─── */
   .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
@@ -140,6 +243,12 @@
   .lightbox-title { font-size: 14px; font-weight: 600; }
   .lightbox-close { background: none; border: none; color: white; font-size: 28px;
     cursor: pointer; line-height: 1; padding: 0 4px; }
+  .lb-action-btn {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: white; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s; font-family: inherit;
+  }
+  .lb-action-btn:hover { background: rgba(255,255,255,0.28); }
   .lightbox-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 4px; }
   .lightbox-nav {
     position: absolute; top: 50%; transform: translateY(-50%);
@@ -183,10 +292,10 @@
   .btn-secondary {
     padding: 10px 20px; background: white; color: #666; border: 1.5px solid #ddd;
     border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer;
-    transition: all 0.2s; font-family: inherit;
+    transition: all 0.2s; font-family: inherit; white-space: nowrap; min-width: 80px;
   }
   .btn-secondary:hover { border-color: #aaa; }
-  .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-footer { display: flex; flex-direction: row; gap: 10px; margin-top: 20px; flex-wrap: nowrap; }
 
   /* ─── 관리자 패널 ─── */
   .admin-modal { width: 520px; }
@@ -218,6 +327,41 @@
   .progress-text { font-size: 12px; color: #666; text-align: center; margin-top: 6px; }
   .token-hint { font-size: 11px; color: #888; margin-top: 4px; line-height: 1.5; }
 
+  /* ─── 업로드 내역 ─── */
+  .history-section { margin-top: 24px; border-top: 1px solid #e2eaf5; padding-top: 16px; }
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 14px; font-weight: 700; color: #1a1a2e; }
+  .btn-refresh { font-size: 12px; padding: 4px 10px; border: 1px solid #c5d4ec; border-radius: 6px; background: white; cursor: pointer; color: #4a5568; }
+  .btn-refresh:hover { background: #f0f4fa; }
+  .history-month { margin-bottom: 12px; border: 1px solid #e2eaf5; border-radius: 8px; overflow: hidden; }
+  .history-month-title { background: #0f2d6b; color: white; padding: 7px 14px; font-size: 13px; font-weight: 700; }
+  .history-cat { padding: 8px 14px; border-bottom: 1px solid #f0f4fa; }
+  .history-cat:last-child { border-bottom: none; }
+  .history-cat-name { font-size: 12px; font-weight: 700; color: #1e4fa0; margin-bottom: 4px; }
+  .history-companies { display: flex; flex-wrap: wrap; gap: 6px; }
+  .history-chip { font-size: 11px; background: #e8eef5; border-radius: 12px; padding: 2px 10px; color: #4a5568; }
+  .history-empty { text-align: center; color: #aaa; padding: 16px; font-size: 13px; }
+
+  /* ─── 메모 박스 ─── */
+  .memo-box {
+    background: #fffbea;
+    border: 1.5px solid #f6d860;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #5a4500;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .memo-box-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #b58a00;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+  }
+
   /* ─── 토스트 ─── */
   .toast {
     position: fixed; bottom: 24px; right: 24px;
@@ -247,23 +391,29 @@
   <button class="btn-admin" onclick="openAdminAuth()">🔐 관리자</button>
 </div>
 
+<!-- 필터 바 -->
+<div class="filter-bar">
+  <div class="filter-section">
+    <span class="filter-label">월 선택</span>
+    <div class="month-select-wrap">
+      <select class="month-select" id="monthSelect" onchange="selectMonth(this.value)">
+        <option value="">— 월 선택 —</option>
+      </select>
+    </div>
+  </div>
+  <div class="filter-section">
+    <span class="filter-label">구분</span>
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="setCategory('손보', event)">손해보험</button>
+      <button class="cat-tab" onclick="setCategory('생보', event)">생명보험</button>
+    </div>
+  </div>
+</div>
+
 <!-- 메인 컨테이너 -->
 <div class="container">
-  <!-- 월 선택 -->
-  <div class="month-bar" id="monthBar">
-    <span class="month-bar-label">월 선택</span>
-    <div id="monthTabs"><div class="loading"><span class="spinner"></span>로딩 중...</div></div>
-  </div>
-
-  <!-- 구분 탭 -->
-  <div class="cat-tabs">
-    <button class="cat-tab active" onclick="setCategory('손보')">손해보험</button>
-    <button class="cat-tab" onclick="setCategory('생보')">생명보험</button>
-  </div>
-
-  <!-- 컨텐츠 -->
   <div id="content">
-    <div class="loading"><span class="spinner"></span>파일 목록을 불러오는 중...</div>
+    <div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>
   </div>
 </div>
 
@@ -271,7 +421,11 @@
 <div class="lightbox" id="lightbox">
   <div class="lightbox-header">
     <span class="lightbox-title" id="lbTitle"></span>
-    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="lb-action-btn" onclick="lbDownload()" title="다운로드">⬇ 다운로드</button>
+      <button class="lb-action-btn" onclick="lbPrint()" title="인쇄">🖨 인쇄</button>
+      <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    </div>
   </div>
   <button class="lightbox-nav lightbox-prev" onclick="lbNav(-1)">&#8249;</button>
   <img class="lightbox-img" id="lbImg" src="" alt="">
@@ -291,7 +445,7 @@
       <div class="error-msg" id="pwError" style="display:none">비밀번호가 올바르지 않습니다</div>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('authModal')">취소</button>
+      <button class="btn-secondary" onclick="closeModal('authModal')">닫기</button>
       <button class="btn-primary" onclick="checkPassword()">확인</button>
     </div>
   </div>
@@ -304,11 +458,11 @@
     <p class="modal-sub">시상안 이미지를 월별로 업로드합니다</p>
 
     <div class="form-group">
-      <label class="form-label">GitHub Personal Access Token</label>
-      <input class="form-input" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+      <label class="form-label">GitLab Personal Access Token</label>
+      <input class="form-input" type="password" id="ghToken" placeholder="glpat-xxxxxxxxxxxx">
       <div class="token-hint">
-        GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens<br>
-        권한: <strong>Contents: Read and write</strong> 필요
+        GitLab → 프로필 → Edit profile → Access tokens<br>
+        Scopes: <strong>api</strong> 체크 후 발급
       </div>
     </div>
 
@@ -330,7 +484,7 @@
     </div>
 
     <div class="form-group">
-      <label class="form-label">ZIP 파일 업로드</label>
+      <label class="form-label">이미지 파일 업로드</label>
       <div class="upload-area" id="uploadArea"
         onclick="document.getElementById('imgInput').click()"
         ondragover="handleDragOver(event)"
@@ -345,6 +499,13 @@
       <div class="file-list" id="fileList" style="display:none"></div>
     </div>
 
+    <div class="form-group">
+      <label class="form-label">업데이트 메모 <span style="font-weight:400;color:#aaa;">(선택)</span></label>
+      <textarea class="form-input" id="uploadMemo" rows="3"
+        placeholder="예: DB손보 3주차 변경&#10;- 주간가동시상 최대 200%로 상향&#10;- 주력상품 최대 200%로 변경"
+        style="resize:vertical;min-height:72px;font-size:13px;line-height:1.6;"></textarea>
+    </div>
+
     <div id="progressArea" style="display:none">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <div class="progress-text" id="progressText">업로드 준비 중...</div>
@@ -353,6 +514,15 @@
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('adminModal')">닫기</button>
       <button class="btn-primary" id="uploadBtn" onclick="startUpload()" disabled>업로드 시작</button>
+    </div>
+
+    <!-- 업로드 내역 -->
+    <div class="history-section">
+      <div class="history-header">
+        <span>📋 업로드 내역</span>
+        <button class="btn-refresh" onclick="loadUploadHistory()">🔄 새로고침</button>
+      </div>
+      <div id="uploadHistory"><div style="text-align:center;color:#aaa;padding:20px;font-size:13px;">로그인 후 내역을 불러옵니다</div></div>
     </div>
   </div>
 </div>
@@ -365,8 +535,8 @@
 //  CONFIG — GitHub 저장소 설정
 // ══════════════════════════════
 const CONFIG = {
-  GITHUB_OWNER: 'tossinsu1',     // GitHub 조직명
-  GITHUB_REPO:  'promotion',      // 저장소 이름
+  GITHUB_OWNER: 'YOUR_GITHUB_USERNAME',  // ← GitHub 계정명으로 변경
+  GITHUB_REPO:  'YOUR_REPO_NAME',        // ← 저장소명으로 변경 (예: sisang)
   BRANCH: 'main',
   // SHA256('toss1234')
   ADMIN_PASSWORD_HASH: '592fe43cf4ec094ff247bcd8beb6049e6bb4198336f41f180678776868d89376'
@@ -379,10 +549,12 @@ let state = {
   months: [],
   selectedMonth: null,
   selectedCategory: '손보',
+  selectedCompany: null,  // 보험사 상세 뷰
   files: [],          // 현재 표시 중인 파일 목록
+  memo: '',
   lbIndex: 0,
   lbFiles: [],        // 라이트박스용 파일 배열
-  uploadFiles: [],    // zip에서 추출한 파일들
+  uploadFiles: [],    // 업로드할 파일들
   uploadCat: '손보',
 };
 
@@ -400,50 +572,80 @@ async function init() {
 // ══════════════════════════════
 //  GitHub API 헬퍼
 // ══════════════════════════════
+function ghBase() {
+  return `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}`;
+}
+function rawBase() {
+  return `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.BRANCH}`;
+}
+function encodeURIPath(path) {
+  return path.split('/').map(p => encodeURIComponent(p)).join('/');
+}
+
+// ── GitHub: 디렉토리 목록 조회 ──
 async function githubGet(path, token = null) {
-  const headers = { 'Accept': 'application/vnd.github+json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000); // 8초 타임아웃
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`, { headers, signal: controller.signal });
+    const url = `${ghBase()}/contents/${encodeURIPath(path)}?ref=${CONFIG.BRANCH}`;
+    const headers = { 'Accept': 'application/vnd.github.v3+json' };
+    if (token) headers['Authorization'] = `token ${token}`;
+    const res = await fetch(url, { headers, signal: controller.signal });
     clearTimeout(timeout);
     if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
-    return res.json();
+    const items = await res.json();
+    const arr = Array.isArray(items) ? items : [items];
+    return arr.map(item => ({
+      name: item.name,
+      type: item.type === 'file' ? 'file' : 'dir',
+      path: item.path,
+      sha:  item.sha,
+      download_url: item.type === 'file'
+        ? `${rawBase()}/${item.path}`
+        : null
+    }));
   } catch(e) {
     clearTimeout(timeout);
     throw e;
   }
 }
 
-async function githubPut(path, content, message, token, sha = null) {
+// ── GitHub: 파일 생성/업데이트 (PUT 하나로 처리) ──
+async function githubPut(filePath, content, message, token) {
+  const url = `${ghBase()}/contents/${encodeURIPath(filePath)}`;
+  const headers = {
+    'Authorization': `token ${token}`,
+    'Content-Type':  'application/json',
+    'Accept':        'application/vnd.github.v3+json'
+  };
+
+  // 기존 파일 SHA 조회 (덮어쓰기 시 필요)
+  let sha = null;
+  try {
+    const checkRes = await fetch(`${url}?ref=${CONFIG.BRANCH}`, { headers });
+    if (checkRes.ok) {
+      const existing = await checkRes.json();
+      sha = existing.sha;
+    }
+  } catch(e) {}
+
   const body = { message, content, branch: CONFIG.BRANCH };
   if (sha) body.sha = sha;
-  const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${encodeURIPath(path)}`, {
+
+  return fetch(url, {
     method: 'PUT',
-    headers: {
-      'Accept': 'application/vnd.github+json',
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(body)
   });
-  return res;
-}
-
-function encodeURIPath(path) {
-  return path.split('/').map(p => encodeURIComponent(p)).join('/');
 }
 
 // ══════════════════════════════
 //  월 목록 로드
 // ══════════════════════════════
 async function loadMonths() {
-  const tabsEl = document.getElementById('monthTabs');
   const contentEl = document.getElementById('content');
 
   // 즉시 빈 상태 표시 (API 응답 기다리지 않음)
-  tabsEl.innerHTML = '<span style="font-size:13px;color:#aaa;">업로드된 파일이 없습니다</span>';
   contentEl.innerHTML = '<div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>';
 
   // 백그라운드에서 실제 데이터 로드 시도
@@ -457,7 +659,7 @@ async function loadMonths() {
     if (state.months.length === 0) return; // 이미 빈 상태 표시됨
 
     state.selectedMonth = state.months[0];
-    renderMonthTabs();
+    renderMonthSelect();
     await loadFiles();
   } catch(e) {
     // 타임아웃 or 404 → 이미 빈 상태 표시되어 있으므로 그냥 둠
@@ -471,26 +673,30 @@ function formatMonth(yyyymm) {
   return `${y}년 ${m}월`;
 }
 
-function renderMonthTabs() {
-  document.getElementById('monthTabs').innerHTML = state.months.map(m =>
-    `<button class="month-tab ${m === state.selectedMonth ? 'active' : ''}" onclick="selectMonth('${m}')">${formatMonth(m)}</button>`
-  ).join('');
+function renderMonthSelect() {
+  const sel = document.getElementById('monthSelect');
+  sel.innerHTML = '<option value="">— 월 선택 —</option>' +
+    state.months.map(m =>
+      `<option value="${m}" ${m === state.selectedMonth ? 'selected' : ''}>${formatMonth(m)}</option>`
+    ).join('');
 }
 
 async function selectMonth(m) {
+  if (!m) return;
   state.selectedMonth = m;
-  renderMonthTabs();
+  state.selectedCompany = null; // 월 바꾸면 상세 뷰 초기화
   await loadFiles();
 }
 
 // ══════════════════════════════
 //  파일 목록 로드
 // ══════════════════════════════
-function setCategory(cat) {
+function setCategory(cat, evt) {
   state.selectedCategory = cat;
+  state.selectedCompany = null; // 구분 바꾸면 상세 뷰 초기화
   document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active'));
-  event.target.classList.add('active');
-  renderFiles();
+  if (evt && evt.target) evt.target.classList.add('active');
+  loadFiles();
 }
 
 async function loadFiles() {
@@ -502,6 +708,15 @@ async function loadFiles() {
     state.files = items
       .filter(i => i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.name))
       .map(i => ({ name: i.name, url: i.download_url }));
+
+    // 메모 불러오기
+    state.memo = '';
+    try {
+      const memoUrl = `${rawBase()}/${path}/_memo.txt`;
+      const memoRes = await fetch(memoUrl);
+      if (memoRes.ok) state.memo = await memoRes.text();
+    } catch(e) {}
+
     renderFiles();
   } catch(e) {
     el.innerHTML = '<div class="empty-state"><div class="icon">🗂️</div><p>이 달의 시상안이 없습니다</p></div>';
@@ -521,7 +736,18 @@ function renderFiles() {
     return;
   }
 
-  // 보험사별 그룹핑
+  // ── 메모 ──
+  const memoHtml = state.memo
+    ? `<div class="memo-box"><div class="memo-box-label">📌 업데이트 안내</div>${state.memo.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+    : '';
+
+  // ── 보험사 상세 뷰 ──
+  if (state.selectedCompany) {
+    renderCompanyDetail(el, memoHtml);
+    return;
+  }
+
+  // ── 보험사 그리드 뷰 ──
   const groups = {};
   state.files.forEach(f => {
     const co = getCompany(f.name);
@@ -530,31 +756,143 @@ function renderFiles() {
   });
 
   const sortedCos = Object.keys(groups).sort();
+  const monthLabel = state.selectedMonth
+    ? `${state.selectedMonth.substring(0,4)}.${state.selectedMonth.substring(4,6)}`
+    : '';
 
-  el.innerHTML = `<div class="company-grid">${sortedCos.map(co => {
+  el.innerHTML = memoHtml + `<div class="company-grid">${sortedCos.map(co => {
     const files = groups[co];
-    const thumbs = files.map((f, i) => {
-      const allIdx = state.files.indexOf(f);
-      return `<div>
-        <img class="img-thumb" src="${f.url}" alt="${f.name}"
-          onclick="openLightbox(${allIdx})" loading="lazy">
-        <div class="img-label">${getLabelText(f.name)}</div>
-      </div>`;
-    }).join('');
-    return `<div class="company-card">
-      <div class="company-header">
-        <span>${co}</span>
-        <span class="company-count">${files.length}개</span>
+    const PREVIEW = 3;
+    const previewFiles = files.slice(0, PREVIEW);
+    const extraCount = files.length - PREVIEW;
+
+    const thumbsHtml = previewFiles.map(f =>
+      `<img class="card-thumb" src="${f.url}" alt="${f.name}" loading="lazy">`
+    ).join('');
+
+    const moreHtml = extraCount > 0
+      ? `<div class="card-thumb-more">+${extraCount}</div>`
+      : '';
+
+    const safeCoName = co.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div class="company-card" onclick="openCompanyDetail('${safeCoName}')">
+      <div class="card-top">
+        <span class="card-company">${co}</span>
+        <span class="card-date-badge">${monthLabel}</span>
       </div>
-      <div class="img-grid">${thumbs}</div>
+      <div class="card-thumbs">${thumbsHtml}${moreHtml}</div>
+      <div class="card-bottom">
+        <span class="card-count">총 <strong>${files.length}</strong>장</span>
+        <span class="card-arrow">›</span>
+      </div>
     </div>`;
   }).join('')}</div>`;
 }
 
+// ── 보험사 상세 뷰 렌더링 ──
+function renderCompanyDetail(el, memoHtml) {
+  const co = state.selectedCompany;
+  const coFiles = state.files.filter(f => getCompany(f.name) === co);
+  const monthLabel = state.selectedMonth
+    ? `${state.selectedMonth.substring(0,4)}년 ${state.selectedMonth.substring(4,6)}월`
+    : '';
+
+  const itemsHtml = coFiles.map((f, i) => {
+    const label = getLabelText(f.name);
+    const safeUrl = f.url.replace(/'/g, "\\'");
+    const safeName = f.name.replace(/'/g, "\\'");
+    return `<div class="detail-item">
+      <div class="detail-img-wrap" onclick="openCompanyLightbox(${i})">
+        <img class="detail-img" src="${f.url}" alt="${f.name}" loading="lazy">
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-name">${label}</div>
+        <div class="detail-actions">
+          <button class="btn-dl" onclick="downloadImg('${safeUrl}','${safeName}')">⬇ 다운로드</button>
+          <button class="btn-print" onclick="printImg('${safeUrl}','${safeName}')">🖨 인쇄</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    ${memoHtml}
+    <div class="detail-header">
+      <button class="btn-back" onclick="closeCompanyDetail()">&#8249; 목록으로</button>
+      <span class="detail-title">${co}</span>
+      <span class="detail-sub">${monthLabel} &nbsp;·&nbsp; 총 ${coFiles.length}장</span>
+    </div>
+    <div class="detail-grid">${itemsHtml}</div>
+  `;
+  state.lbFiles = coFiles;
+}
+
+function openCompanyDetail(co) {
+  state.selectedCompany = co;
+  renderFiles();
+}
+
+function closeCompanyDetail() {
+  state.selectedCompany = null;
+  renderFiles();
+}
+
+function openCompanyLightbox(idx) {
+  state.lbIndex = idx;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('show');
+  document.addEventListener('keydown', lbKeyHandler);
+}
+
 function getLabelText(filename) {
   // 예: DB손보_26.04 시상안5(3주차).jpg → 시상안5(3주차)
-  const match = filename.match(/시상안\d+[^.)]*/);
+  const match = filename.match(/시상안\d+[^.)]*(\([^)]*\))?/);
   return match ? match[0] : filename.split('_').slice(1).join('_').replace(/\.[^.]+$/, '');
+}
+
+// ══════════════════════════════
+//  다운로드 / 인쇄
+// ══════════════════════════════
+async function downloadImg(url, filename) {
+  try {
+    showToast('다운로드 중...', '');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('fetch 실패');
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+    showToast('✅ 다운로드 완료', 'success');
+  } catch(e) {
+    // fallback: 새 탭으로 열기
+    window.open(url, '_blank');
+  }
+}
+
+function printImg(url, title) {
+  const win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><title>${title}</title>
+    <style>
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#fff; }
+      img { max-width:100%; max-height:100vh; object-fit:contain; }
+      @media print { body { display:block; } img { width:100%; page-break-inside:avoid; } }
+    </style></head>
+    <body><img src="${url}" onload="window.focus();window.print();" onerror="document.body.innerHTML='이미지를 불러올 수 없습니다';">
+    </body></html>`);
+  win.document.close();
+}
+
+// ── 라이트박스 다운로드/인쇄 ──
+function lbDownload() {
+  const f = state.lbFiles[state.lbIndex];
+  if (f) downloadImg(f.url, f.name);
+}
+function lbPrint() {
+  const f = state.lbFiles[state.lbIndex];
+  if (f) printImg(f.url, f.name);
 }
 
 // ══════════════════════════════
@@ -613,8 +951,10 @@ async function checkPassword() {
     closeModal('authModal');
     openModal('adminModal');
     // 저장된 토큰 복원
-    const saved = sessionStorage.getItem('gh_token');
-    if (saved) document.getElementById('ghToken').value = saved;
+    const savedToken = localStorage.getItem('gl_token');
+    if (savedToken) document.getElementById('ghToken').value = savedToken;
+    // 업로드 내역 자동 로드
+    setTimeout(loadUploadHistory, 300);
   } else {
     document.getElementById('pwError').style.display = 'block';
     document.getElementById('pwInput').classList.add('error');
@@ -691,12 +1031,12 @@ async function startUpload() {
   const monthVal = document.getElementById('uploadMonth').value; // YYYY-MM
   const cat = state.uploadCat;
 
-  if (!token) { showToast('GitHub Token을 입력하세요', 'error'); return; }
+  if (!token) { showToast('GitLab Token을 입력하세요', 'error'); return; }
   if (!monthVal) { showToast('업로드 월을 선택하세요', 'error'); return; }
   if (state.uploadFiles.length === 0) { showToast('이미지 파일을 먼저 선택하세요', 'error'); return; }
 
-  // 토큰 세션 저장
-  sessionStorage.setItem('gh_token', token);
+  // 토큰 로컬 저장 (다음 접속 시 복원)
+  localStorage.setItem('gl_token', token);
 
   const yyyymm = monthVal.replace('-', '');
   const basePath = `files/${yyyymm}/${cat}`;
@@ -717,15 +1057,7 @@ async function startUpload() {
 
       let res = await githubPut(filePath, base64, msg, token);
 
-      if (res.status === 422) {
-        // 파일 이미 존재 → SHA 가져와서 update
-        try {
-          const existing = await githubGet(filePath, token);
-          await githubPut(filePath, base64, msg, token, existing.sha);
-        } catch(e2) {
-          console.warn('Update failed:', file.name, e2);
-        }
-      } else if (!res.ok) {
+      if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || `HTTP ${res.status}`);
       }
@@ -736,6 +1068,16 @@ async function startUpload() {
     done++;
   }
 
+  // 메모 저장
+  const memo = document.getElementById('uploadMemo').value.trim();
+  if (memo) {
+    setProgress(total, total, '메모 저장 중...');
+    try {
+      const memoBase64 = btoa(unescape(encodeURIComponent(memo)));
+      await githubPut(`${basePath}/_memo.txt`, memoBase64, `메모 업데이트 ${monthVal}`, token);
+    } catch(e) { console.warn('메모 저장 실패:', e); }
+  }
+
   setProgress(total, total, '업로드 완료!');
   showToast(`✅ ${total}개 파일 업로드 완료`, 'success');
   document.getElementById('uploadBtn').disabled = false;
@@ -744,7 +1086,7 @@ async function startUpload() {
   await loadMonths();
   if (state.selectedMonth !== yyyymm) {
     state.selectedMonth = yyyymm;
-    renderMonthTabs();
+    renderMonthSelect();
   }
   state.selectedCategory = cat;
   await loadFiles();
@@ -798,6 +1140,61 @@ function showToast(msg, type = '') {
   el.className = 'toast show' + (type ? ' ' + type : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.className = 'toast'; }, 3000);
+}
+
+// ══════════════════════════════
+//  업로드 내역 로드
+// ══════════════════════════════
+async function loadUploadHistory() {
+  const el = document.getElementById('uploadHistory');
+  el.innerHTML = '<div style="text-align:center;color:#aaa;padding:16px;font-size:13px;"><span class="spinner"></span> 불러오는 중...</div>';
+
+  const token = document.getElementById('ghToken').value.trim() || localStorage.getItem('gl_token');
+
+  try {
+    // 월 목록 가져오기
+    const months = await githubGet('files', token || null);
+    const monthDirs = months.filter(i => i.type === 'dir' && /^\d{6}$/.test(i.name))
+      .map(i => i.name).sort((a, b) => b.localeCompare(a));
+
+    if (monthDirs.length === 0) {
+      el.innerHTML = '<div class="history-empty">📂 아직 업로드된 파일이 없습니다</div>';
+      return;
+    }
+
+    let html = '';
+    for (const month of monthDirs) {
+      const label = `${month.substring(0,4)}년 ${month.substring(4,6)}월`;
+      html += `<div class="history-month"><div class="history-month-title">${label}</div>`;
+
+      for (const cat of ['손보', '생보']) {
+        try {
+          const files = await githubGet(`files/${month}/${cat}`, token || null);
+          const imgs = files.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name));
+          if (imgs.length === 0) continue;
+
+          // 보험사별로 그룹
+          const companies = {};
+          imgs.forEach(f => {
+            const co = f.name.includes('_') ? f.name.split('_')[0] : f.name;
+            companies[co] = (companies[co] || 0) + 1;
+          });
+
+          html += `<div class="history-cat">
+            <div class="history-cat-name">${cat === '손보' ? '손해보험' : '생명보험'} (${imgs.length}장)</div>
+            <div class="history-companies">
+              ${Object.entries(companies).map(([co, cnt]) =>
+                `<span class="history-chip">${co} ${cnt}장</span>`).join('')}
+            </div>
+          </div>`;
+        } catch(e) { /* 해당 카테고리 없음 */ }
+      }
+      html += '</div>';
+    }
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<div class="history-empty">⚠️ 내역을 불러올 수 없습니다. 토큰을 먼저 입력해주세요.</div>';
+  }
 }
 
 // 페이지 로드 시 초기화
