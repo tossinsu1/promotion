@@ -390,7 +390,6 @@ let state = {
 //  초기화
 // ══════════════════════════════
 async function init() {
-  // 기본 업로드 월: 이번 달
   const now = new Date();
   document.getElementById('uploadMonth').value =
     `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
@@ -797,4 +796,13 @@ function showToast(msg, type = '') {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = 'toast'; }, 3000);
+}
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
   
