@@ -8,7 +8,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
     background: #f0f4fa; color: #1a1a2e; min-height: 100vh; }
-    
+
   /* ─── 헤더 ─── */
   .header {
     background: #0f2d6b;
@@ -404,9 +404,17 @@ async function init() {
 async function githubGet(path, token = null) {
   const headers = { 'Accept': 'application/vnd.github+json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`, { headers });
-  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
-  return res.json();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000); // 8초 타임아웃
+  try {
+    const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`, { headers, signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
+    return res.json();
+  } catch(e) {
+    clearTimeout(timeout);
+    throw e;
+  }
 }
 
 async function githubPut(path, content, message, token, sha = null) {
