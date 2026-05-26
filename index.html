@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>토스인슈어런스 시상안</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+    background: #f0f4fa; color: #1a1a2e; min-height: 100vh; }
+
+  /* ─── 헤더 ─── */
+  .header {
+    background: #0f2d6b;
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-logo { display: flex; align-items: center; gap: 10px; }
+  .logo-box { width: 32px; height: 32px; background: #4a9eff; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; }
+  .header-title { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .header-sub { font-size: 11px; color: #8ab0e0; margin-top: 1px; }
+  .btn-admin {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: white;
+    padding: 7px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .btn-admin:hover { background: rgba(255,255,255,0.22); }
+
+  /* ─── 컨테이너 ─── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+
+  /* ─── 월 탭 ─── */
+  .month-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+  .month-bar-label { font-size: 12px; color: #666; font-weight: 600; margin-right: 4px; }
+  .month-tab {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 2px solid #c5d4ec;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    transition: all 0.2s;
+  }
+  .month-tab.active {
+    background: #0f2d6b;
+    border-color: #0f2d6b;
+    color: white;
+  }
+  .month-tab:hover:not(.active) { border-color: #0f2d6b; color: #0f2d6b; }
+
+  /* ─── 분류 탭 ─── */
+  .cat-tabs { display: flex; gap: 0; margin-bottom: 20px; border-radius: 8px; overflow: hidden;
+    border: 2px solid #0f2d6b; width: fit-content; }
+  .cat-tab {
+    padding: 8px 28px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    background: white;
+    color: #0f2d6b;
+    transition: all 0.2s;
+    border: none;
+  }
+  .cat-tab.active { background: #0f2d6b; color: white; }
+  .cat-tab:hover:not(.active) { background: #e8eef5; }
+
+  /* ─── 보험사 그리드 ─── */
+  .company-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .company-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid #e2eaf5;
+  }
+  .company-header {
+    background: #1e4fa0;
+    color: white;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .company-count { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
+  .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 6px; padding: 10px; }
+  .img-thumb {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    border: 1px solid #e0e8f5;
+    background: #f5f8fd;
+  }
+  .img-thumb:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+  .img-label { font-size: 10px; color: #888; text-align: center; margin-top: 2px; padding: 0 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ─── 빈 상태 ─── */
+  .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+
+  /* ─── 로딩 ─── */
+  .loading { text-align: center; padding: 40px; color: #666; font-size: 14px; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid #e0e8f5;
+    border-top-color: #1e4fa0; border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin-right: 10px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── 라이트박스 ─── */
+  .lightbox {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .lightbox.show { display: flex; }
+  .lightbox-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.6); padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    color: white;
+  }
+  .lightbox-title { font-size: 14px; font-weight: 600; }
+  .lightbox-close { background: none; border: none; color: white; font-size: 28px;
+    cursor: pointer; line-height: 1; padding: 0 4px; }
+  .lightbox-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 4px; }
+  .lightbox-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.15); border: none; color: white;
+    font-size: 28px; width: 48px; height: 64px; cursor: pointer;
+    border-radius: 4px; transition: background 0.2s;
+  }
+  .lightbox-nav:hover { background: rgba(255,255,255,0.28); }
+  .lightbox-prev { left: 12px; }
+  .lightbox-next { right: 12px; }
+  .lightbox-counter { position: absolute; bottom: 16px; color: rgba(255,255,255,0.7); font-size: 13px; }
+
+  /* ─── 모달 공통 ─── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 500; align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white; border-radius: 12px; padding: 28px; width: 420px; max-width: 95vw;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .modal h2 { font-size: 18px; font-weight: 800; color: #0f2d6b; margin-bottom: 6px; }
+  .modal-sub { font-size: 12px; color: #888; margin-bottom: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 700; color: #444; margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #c5d4ec; border-radius: 7px;
+    font-size: 14px; outline: none; transition: border-color 0.2s; font-family: inherit;
+  }
+  .form-input:focus { border-color: #1e4fa0; }
+  .form-input.error { border-color: #e53e3e; }
+  .error-msg { font-size: 12px; color: #e53e3e; margin-top: 4px; }
+  .btn-primary {
+    width: 100%; padding: 12px; background: #0f2d6b; color: white; border: none;
+    border-radius: 7px; font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: background 0.2s; font-family: inherit;
+  }
+  .btn-primary:hover { background: #1e4fa0; }
+  .btn-primary:disabled { background: #aaa; cursor: not-allowed; }
+  .btn-secondary {
+    padding: 10px 20px; background: white; color: #666; border: 1.5px solid #ddd;
+    border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; font-family: inherit;
+  }
+  .btn-secondary:hover { border-color: #aaa; }
+  .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+
+  /* ─── 관리자 패널 ─── */
+  .admin-modal { width: 520px; }
+  .radio-group { display: flex; gap: 12px; }
+  .radio-label {
+    flex: 1; border: 2px solid #c5d4ec; border-radius: 8px; padding: 10px 14px;
+    cursor: pointer; text-align: center; font-size: 14px; font-weight: 700;
+    color: #4a5568; transition: all 0.2s;
+  }
+  .radio-label.selected { border-color: #1e4fa0; background: #eef4ff; color: #1e4fa0; }
+  .radio-label input { display: none; }
+  .upload-area {
+    border: 2px dashed #c5d4ec; border-radius: 8px; padding: 30px 20px;
+    text-align: center; cursor: pointer; transition: all 0.2s;
+    background: #fafbfd;
+  }
+  .upload-area:hover, .upload-area.dragover { border-color: #1e4fa0; background: #eef4ff; }
+  .upload-area .upload-icon { font-size: 36px; margin-bottom: 8px; }
+  .upload-area p { font-size: 13px; color: #666; }
+  .upload-area strong { color: #1e4fa0; }
+  .file-list { max-height: 160px; overflow-y: auto; margin-top: 10px; border: 1px solid #e2eaf5;
+    border-radius: 6px; background: #fafbfd; }
+  .file-item { padding: 6px 12px; font-size: 12px; color: #555; border-bottom: 1px solid #f0f4fa;
+    display: flex; align-items: center; gap: 6px; }
+  .file-item:last-child { border-bottom: none; }
+  .file-item .fi-icon { font-size: 14px; }
+  .progress-bar { height: 6px; background: #e2eaf5; border-radius: 3px; margin-top: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #1e4fa0; border-radius: 3px; transition: width 0.3s; width: 0%; }
+  .progress-text { font-size: 12px; color: #666; text-align: center; margin-top: 6px; }
+  .token-hint { font-size: 11px; color: #888; margin-top: 4px; line-height: 1.5; }
+
+  /* ─── 토스트 ─── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #0f2d6b; color: white;
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; transform: translateY(10px);
+    transition: all 0.3s; pointer-events: none;
+    z-index: 9999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: #c53030; }
+  .toast.success { background: #276749; }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-box">T</div>
+    <div>
+      <div class="header-title">토스인슈어런스 시상안</div>
+      <div class="header-sub">월별 · 보험사별 시상 안내</div>
+    </div>
+  </div>
+  <button class="btn-admin" onclick="openAdminAuth()">🔐 관리자</button>
+</div>
+
+<!-- 메인 컨테이너 -->
+<div class="container">
+  <!-- 월 선택 -->
+  <div class="month-bar" id="monthBar">
+    <span class="month-bar-label">월 선택</span>
+    <div id="monthTabs"><div class="loading"><span class="spinner"></span>로딩 중...</div></div>
+  </div>
+
+  <!-- 구분 탭 -->
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="setCategory('손보')">손해보험</button>
+    <button class="cat-tab" onclick="setCategory('생보')">생명보험</button>
+  </div>
+
+  <!-- 컨텐츠 -->
+  <div id="content">
+    <div class="loading"><span class="spinner"></span>파일 목록을 불러오는 중...</div>
+  </div>
+</div>
+
+<!-- 라이트박스 -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-header">
+    <span class="lightbox-title" id="lbTitle"></span>
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  </div>
+  <button class="lightbox-nav lightbox-prev" onclick="lbNav(-1)">&#8249;</button>
+  <img class="lightbox-img" id="lbImg" src="" alt="">
+  <button class="lightbox-nav lightbox-next" onclick="lbNav(1)">&#8250;</button>
+  <div class="lightbox-counter" id="lbCounter"></div>
+</div>
+
+<!-- 비밀번호 모달 -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <h2>🔐 관리자 인증</h2>
+    <p class="modal-sub">관리자 비밀번호를 입력하세요</p>
+    <div class="form-group">
+      <label class="form-label">비밀번호</label>
+      <input class="form-input" type="password" id="pwInput" placeholder="비밀번호 입력"
+        onkeydown="if(event.key==='Enter') checkPassword()">
+      <div class="error-msg" id="pwError" style="display:none">비밀번호가 올바르지 않습니다</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('authModal')">취소</button>
+      <button class="btn-primary" onclick="checkPassword()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 패널 모달 -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal admin-modal">
+    <h2>📂 관리자 패널</h2>
+    <p class="modal-sub">시상안 이미지를 월별로 업로드합니다</p>
+
+    <div class="form-group">
+      <label class="form-label">GitHub Personal Access Token</label>
+      <input class="form-input" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+      <div class="token-hint">
+        GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens<br>
+        권한: <strong>Contents: Read and write</strong> 필요
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">업로드 월 (YYYY-MM 형식)</label>
+      <input class="form-input" type="month" id="uploadMonth" value="">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">보험 구분</label>
+      <div class="radio-group">
+        <label class="radio-label selected" id="cat손보" onclick="selectCat('손보')">
+          <input type="radio" name="uploadCat" value="손보" checked> 손해보험 (손보)
+        </label>
+        <label class="radio-label" id="cat생보" onclick="selectCat('생보')">
+          <input type="radio" name="uploadCat" value="생보"> 생명보험 (생보)
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ZIP 파일 업로드</label>
+      <div class="upload-area" id="uploadArea"
+        onclick="document.getElementById('imgInput').click()"
+        ondragover="handleDragOver(event)"
+        ondrop="handleDrop(event)">
+        <div class="upload-icon">🖼️</div>
+        <p><strong>이미지 파일을 선택</strong>하거나 여기에 드래그하세요</p>
+        <p style="font-size:11px;color:#aaa;margin-top:4px">JPG · PNG · GIF · WEBP / 여러 장 동시 선택 가능</p>
+        <p style="font-size:11px;color:#aaa;margin-top:2px">파일명 형식: 보험사명_월.날짜 시상안번호(주차).jpg</p>
+      </div>
+      <input type="file" id="imgInput" accept="image/*,.jpg,.jpeg,.png,.gif,.webp" multiple
+        style="display:none" onchange="loadImages(this.files)">
+      <div class="file-list" id="fileList" style="display:none"></div>
+    </div>
+
+    <div id="progressArea" style="display:none">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">업로드 준비 중...</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('adminModal')">닫기</button>
+      <button class="btn-primary" id="uploadBtn" onclick="startUpload()" disabled>업로드 시작</button>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════
+//  CONFIG — GitHub 저장소 설정
+// ══════════════════════════════
+const CONFIG = {
+  GITHUB_OWNER: 'tossinsu-commission',     // GitHub 조직명
+  GITHUB_REPO:  'tossinsu-promotion',      // 저장소 이름
+  BRANCH: 'main',
+  // SHA256('toss1234')
+  ADMIN_PASSWORD_HASH: '592fe43cf4ec094ff247bcd8beb6049e6bb4198336f41f180678776868d89376'
+};
+
+// ══════════════════════════════
+//  상태
+// ══════════════════════════════
+let state = {
+  months: [],
+  selectedMonth: null,
+  selectedCategory: '손보',
+  files: [],          // 현재 표시 중인 파일 목록
+  lbIndex: 0,
+  lbFiles: [],        // 라이트박스용 파일 배열
+  uploadFiles: [],    // zip에서 추출한 파일들
+  uploadCat: '손보',
+};
+
+// ══════════════════════════════
+//  초기화
+// ══════════════════════════════
+async function init() {
+  // 기본 업로드 월: 이번 달
+  const now = new Date();
+  document.getElementById('uploadMonth').value =
+    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+  await loadMonths();
+}
+
+// ══════════════════════════════
+//  GitHub API 헬퍼
+// ══════════════════════════════
+async function githubGet(path, token = null) {
+  const headers = { 'Accept': 'application/vnd.github+json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`, { headers });
+  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
+  return res.json();
+}
+
+async function githubPut(path, content, message, token, sha = null) {
+  const body = { message, content, branch: CONFIG.BRANCH };
+  if (sha) body.sha = sha;
+  const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${encodeURIPath(path)}`, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/vnd.github+json',
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  return res;
+}
+
+function encodeURIPath(path) {
+  return path.split('/').map(p => encodeURIComponent(p)).join('/');
+}
+
+// ══════════════════════════════
+//  월 목록 로드
+// ══════════════════════════════
+async function loadMonths() {
+  const tabsEl = document.getElementById('monthTabs');
+  try {
+    const items = await githubGet('files');
+    state.months = items
+      .filter(i => i.type === 'dir' && /^\d{6}$/.test(i.name))
+      .map(i => i.name)
+      .sort((a, b) => b.localeCompare(a)); // 최신순
+
+    if (state.months.length === 0) {
+      tabsEl.innerHTML = '<span style="font-size:13px;color:#aaa;">업로드된 파일이 없습니다</span>';
+      document.getElementById('content').innerHTML =
+        '<div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>';
+      return;
+    }
+
+    state.selectedMonth = state.months[0];
+    renderMonthTabs();
+    await loadFiles();
+  } catch(e) {
+    // 파일 없거나 저장소 초기화 안됨
+    tabsEl.innerHTML = '<span style="font-size:13px;color:#aaa;">데이터 없음</span>';
+    document.getElementById('content').innerHTML =
+      '<div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>';
+  }
+}
+
+function formatMonth(yyyymm) {
+  const y = yyyymm.substring(0,4);
+  const m = yyyymm.substring(4,6);
+  return `${y}년 ${m}월`;
+}
+
+function renderMonthTabs() {
+  document.getElementById('monthTabs').innerHTML = state.months.map(m =>
+    `<button class="month-tab ${m === state.selectedMonth ? 'active' : ''}" onclick="selectMonth('${m}')">${formatMonth(m)}</button>`
+  ).join('');
+}
+
+async function selectMonth(m) {
+  state.selectedMonth = m;
+  renderMonthTabs();
+  await loadFiles();
+}
+
+// ══════════════════════════════
+//  파일 목록 로드
+// ══════════════════════════════
+function setCategory(cat) {
+  state.selectedCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+  renderFiles();
+}
+
+async function loadFiles() {
+  const el = document.getElementById('content');
+  el.innerHTML = '<div class="loading"><span class="spinner"></span>파일을 불러오는 중...</div>';
+  try {
+    const path = `files/${state.selectedMonth}/${state.selectedCategory}`;
+    const items = await githubGet(path);
+    state.files = items
+      .filter(i => i.type === 'file' && /\.(jpg|jpeg|png|gif|webp)$/i.test(i.name))
+      .map(i => ({ name: i.name, url: i.download_url }));
+    renderFiles();
+  } catch(e) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">🗂️</div><p>이 달의 시상안이 없습니다</p></div>';
+    state.files = [];
+  }
+}
+
+function getCompany(filename) {
+  const idx = filename.indexOf('_');
+  return idx > 0 ? filename.substring(0, idx) : '기타';
+}
+
+function renderFiles() {
+  const el = document.getElementById('content');
+  if (state.files.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">🗂️</div><p>이 달의 시상안이 없습니다</p></div>';
+    return;
+  }
+
+  // 보험사별 그룹핑
+  const groups = {};
+  state.files.forEach(f => {
+    const co = getCompany(f.name);
+    if (!groups[co]) groups[co] = [];
+    groups[co].push(f);
+  });
+
+  const sortedCos = Object.keys(groups).sort();
+
+  el.innerHTML = `<div class="company-grid">${sortedCos.map(co => {
+    const files = groups[co];
+    const thumbs = files.map((f, i) => {
+      const allIdx = state.files.indexOf(f);
+      return `<div>
+        <img class="img-thumb" src="${f.url}" alt="${f.name}"
+          onclick="openLightbox(${allIdx})" loading="lazy">
+        <div class="img-label">${getLabelText(f.name)}</div>
+      </div>`;
+    }).join('');
+    return `<div class="company-card">
+      <div class="company-header">
+        <span>${co}</span>
+        <span class="company-count">${files.length}개</span>
+      </div>
+      <div class="img-grid">${thumbs}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function getLabelText(filename) {
+  // 예: DB손보_26.04 시상안5(3주차).jpg → 시상안5(3주차)
+  const match = filename.match(/시상안\d+[^.)]*/);
+  return match ? match[0] : filename.split('_').slice(1).join('_').replace(/\.[^.]+$/, '');
+}
+
+// ══════════════════════════════
+//  라이트박스
+// ══════════════════════════════
+function openLightbox(idx) {
+  state.lbIndex = idx;
+  state.lbFiles = state.files;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('show');
+  document.addEventListener('keydown', lbKeyHandler);
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+  document.removeEventListener('keydown', lbKeyHandler);
+}
+
+function lbNav(dir) {
+  state.lbIndex = (state.lbIndex + dir + state.lbFiles.length) % state.lbFiles.length;
+  updateLightbox();
+}
+
+function updateLightbox() {
+  const f = state.lbFiles[state.lbIndex];
+  document.getElementById('lbImg').src = f.url;
+  document.getElementById('lbTitle').textContent = f.name.replace(/\.[^.]+$/, '');
+  document.getElementById('lbCounter').textContent = `${state.lbIndex + 1} / ${state.lbFiles.length}`;
+}
+
+function lbKeyHandler(e) {
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'Escape') closeLightbox();
+}
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+// ══════════════════════════════
+//  관리자 인증
+// ══════════════════════════════
+function openAdminAuth() {
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwError').style.display = 'none';
+  document.getElementById('pwInput').classList.remove('error');
+  openModal('authModal');
+  setTimeout(() => document.getElementById('pwInput').focus(), 100);
+}
+
+async function checkPassword() {
+  const pw = document.getElementById('pwInput').value;
+  const hash = await sha256(pw);
+  if (hash === CONFIG.ADMIN_PASSWORD_HASH) {
+    closeModal('authModal');
+    openModal('adminModal');
+    // 저장된 토큰 복원
+    const saved = sessionStorage.getItem('gh_token');
+    if (saved) document.getElementById('ghToken').value = saved;
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').classList.add('error');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ══════════════════════════════
+//  업로드 구분 선택
+// ══════════════════════════════
+function selectCat(cat) {
+  state.uploadCat = cat;
+  document.getElementById('cat손보').classList.toggle('selected', cat === '손보');
+  document.getElementById('cat생보').classList.toggle('selected', cat === '생보');
+}
+
+// ══════════════════════════════
+//  이미지 파일 처리
+// ══════════════════════════════
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.add('dragover');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('dragover');
+  const files = Array.from(e.dataTransfer.files).filter(f =>
+    /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name)
+  );
+  if (files.length > 0) loadImages(files);
+}
+
+async function loadImages(fileList) {
+  const files = Array.from(fileList).filter(f =>
+    /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name)
+  );
+  if (files.length === 0) return;
+
+  state.uploadFiles = [];
+  for (const file of files) {
+    const data = await file.arrayBuffer();
+    state.uploadFiles.push({ name: file.name, data });
+  }
+
+  renderFileList();
+  document.getElementById('uploadBtn').disabled = state.uploadFiles.length === 0;
+}
+
+function renderFileList() {
+  const el = document.getElementById('fileList');
+  if (state.uploadFiles.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = state.uploadFiles.map(f =>
+    `<div class="file-item"><span class="fi-icon">🖼️</span>${f.name}</div>`
+  ).join('');
+  document.getElementById('uploadArea').innerHTML =
+    `<div class="upload-icon">✅</div>
+     <p><strong>${state.uploadFiles.length}개 파일</strong>이 선택되었습니다</p>
+     <p style="font-size:11px;color:#aaa;margin-top:4px;cursor:pointer;" onclick="document.getElementById('imgInput').click()">+ 파일 추가하기</p>`;
+}
+
+// ══════════════════════════════
+//  GitHub 업로드
+// ══════════════════════════════
+async function startUpload() {
+  const token = document.getElementById('ghToken').value.trim();
+  const monthVal = document.getElementById('uploadMonth').value; // YYYY-MM
+  const cat = state.uploadCat;
+
+  if (!token) { showToast('GitHub Token을 입력하세요', 'error'); return; }
+  if (!monthVal) { showToast('업로드 월을 선택하세요', 'error'); return; }
+  if (state.uploadFiles.length === 0) { showToast('이미지 파일을 먼저 선택하세요', 'error'); return; }
+
+  // 토큰 세션 저장
+  sessionStorage.setItem('gh_token', token);
+
+  const yyyymm = monthVal.replace('-', '');
+  const basePath = `files/${yyyymm}/${cat}`;
+
+  document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('progressArea').style.display = 'block';
+
+  let done = 0;
+  const total = state.uploadFiles.length;
+
+  for (const file of state.uploadFiles) {
+    const filePath = `${basePath}/${file.name}`;
+    setProgress(done, total, `업로드 중: ${file.name}`);
+
+    try {
+      const base64 = arrayBufferToBase64(file.data);
+      const msg = `Upload ${cat} 시상안 ${monthVal}: ${file.name}`;
+
+      let res = await githubPut(filePath, base64, msg, token);
+
+      if (res.status === 422) {
+        // 파일 이미 존재 → SHA 가져와서 update
+        try {
+          const existing = await githubGet(filePath, token);
+          await githubPut(filePath, base64, msg, token, existing.sha);
+        } catch(e2) {
+          console.warn('Update failed:', file.name, e2);
+        }
+      } else if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `HTTP ${res.status}`);
+      }
+    } catch(e) {
+      showToast(`❌ ${file.name}: ${e.message}`, 'error');
+      console.error(e);
+    }
+    done++;
+  }
+
+  setProgress(total, total, '업로드 완료!');
+  showToast(`✅ ${total}개 파일 업로드 완료`, 'success');
+  document.getElementById('uploadBtn').disabled = false;
+
+  // 월 목록 새로고침
+  await loadMonths();
+  if (state.selectedMonth !== yyyymm) {
+    state.selectedMonth = yyyymm;
+    renderMonthTabs();
+  }
+  state.selectedCategory = cat;
+  await loadFiles();
+
+  // 업로드 폼 리셋
+  setTimeout(resetUploadForm, 2000);
+}
+
+function setProgress(done, total, text) {
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = text;
+}
+
+function resetUploadForm() {
+  state.uploadFiles = [];
+  document.getElementById('fileList').style.display = 'none';
+  document.getElementById('fileList').innerHTML = '';
+  document.getElementById('uploadArea').innerHTML =
+    '<div class="upload-icon">🖼️</div><p><strong>이미지 파일을 선택</strong>하거나 여기에 드래그하세요</p><p style="font-size:11px;color:#aaa;margin-top:4px">JPG · PNG · GIF · WEBP / 여러 장 동시 선택 가능</p><p style="font-size:11px;color:#aaa;margin-top:2px">파일명 형식: 보험사명_월.날짜 시상안번호(주차).jpg</p>';
+  document.getElementById('progressArea').style.display = 'none';
+  document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('imgInput').value = '';
+}
+
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+// ══════════════════════════════
+//  모달 유틸
+// ══════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// 오버레이 클릭 시 닫기
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+});
+
+// ══════════════════════════════
+//  토스트
+// ══════════════════════════════
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (type ? ' ' + type : '');
+  
