@@ -441,6 +441,13 @@ function encodeURIPath(path) {
 // ══════════════════════════════
 async function loadMonths() {
   const tabsEl = document.getElementById('monthTabs');
+  const contentEl = document.getElementById('content');
+
+  // 즉시 빈 상태 표시 (API 응답 기다리지 않음)
+  tabsEl.innerHTML = '<span style="font-size:13px;color:#aaa;">업로드된 파일이 없습니다</span>';
+  contentEl.innerHTML = '<div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>';
+
+  // 백그라운드에서 실제 데이터 로드 시도
   try {
     const items = await githubGet('files');
     state.months = items
@@ -448,21 +455,14 @@ async function loadMonths() {
       .map(i => i.name)
       .sort((a, b) => b.localeCompare(a)); // 최신순
 
-    if (state.months.length === 0) {
-      tabsEl.innerHTML = '<span style="font-size:13px;color:#aaa;">업로드된 파일이 없습니다</span>';
-      document.getElementById('content').innerHTML =
-        '<div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>';
-      return;
-    }
+    if (state.months.length === 0) return; // 이미 빈 상태 표시됨
 
     state.selectedMonth = state.months[0];
     renderMonthTabs();
     await loadFiles();
   } catch(e) {
-    // 파일 없거나 저장소 초기화 안됨
-    tabsEl.innerHTML = '<span style="font-size:13px;color:#aaa;">데이터 없음</span>';
-    document.getElementById('content').innerHTML =
-      '<div class="empty-state"><div class="icon">📂</div><p>관리자가 시상안을 업로드하면 여기에 표시됩니다</p></div>';
+    // 타임아웃 or 404 → 이미 빈 상태 표시되어 있으므로 그냥 둠
+    console.log('loadMonths 오류 (정상):', e.message);
   }
 }
 
